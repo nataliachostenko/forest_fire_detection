@@ -47,7 +47,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t forest-fire-detection .
+        docker build -t forest_fire_training .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -57,5 +57,5 @@ jobs:
 
     - name: Push Docker image to Docker Hub
       run: |
-        docker tag forest_fire_training ${{ secrets.DOCKER_USERNAME }}/forest_fire_training:latest
+        docker tag forest_fire_training ${{ secrets.nchostenko }}/forest_fire_training:latest
         docker push ${{ secrets.nchostenko }}/forest_fire_training:latest
