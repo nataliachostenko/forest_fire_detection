@@ -69,7 +69,8 @@ def main():
 
     if len(all_images) == 0 or len(test_images) == 0:
         raise ValueError(
-            "No images found in the specified directories. Please check the directory paths and contents."
+            "No images found in the specified directories."
+            "Please check the directory paths and contents."
         )
 
     label_encoder = LabelEncoder()
@@ -84,8 +85,12 @@ def main():
         random_state=42,
     )
 
-    transform = transforms.Compose([transforms.ToPILImage(), transforms.ToTensor(
-    ), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), ])
+    transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+
 
     train_dataset = CustomDataset(
         train_images,
@@ -167,8 +172,10 @@ def main():
 
         print(
             f"Epoch {epoch+1}/{num_epochs}, "
-            f"Train Loss: {epoch_loss:.4f}, Train Accuracy: {epoch_accuracy:.4f}, "
-            f"Validation Loss: {val_epoch_loss:.4f}, Validation Accuracy: {val_epoch_accuracy:.4f}")
+            f"Train Loss: {epoch_loss:.4f},"
+            f"Train Accuracy: {epoch_accuracy:.4f}m"
+            f"Validation Loss: {val_epoch_loss:.4f},
+            f"Validation Accuracy: {val_epoch_accuracy:.4f}")
 
     print("Training complete")
 
@@ -232,7 +239,6 @@ def main():
     plt.title("Receiver Operating Characteristic (ROC) Curve")
     plt.legend(loc="lower right")
     plt.savefig("roc_curve.png")
-
 
 if __name__ == "__main__":
     main()
