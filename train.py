@@ -89,8 +89,8 @@ def main():
         transforms.ToPILImage(),
         transforms.ToTensor(),
         transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
         ),
     ])
 
@@ -241,7 +241,7 @@ def main():
     plt.title("Receiver Operating Characteristic (ROC) Curve")
     plt.legend(loc="lower right")
     plt.savefig("roc_curve.png")
-    
+
 
 if __name__ == "__main__":
     main()
