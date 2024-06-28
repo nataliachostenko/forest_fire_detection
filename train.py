@@ -171,10 +171,10 @@ def main():
         val_accuracies.append(val_epoch_accuracy)
 
         print(
-            f"Epoch {epoch+1}/{num_epochs}, "
-            f"Train Loss: {epoch_loss:.4f},"
-            f"Train Accuracy: {epoch_accuracy:.4f}m"
-            f"Validation Loss: {val_epoch_loss:.4f},
+            f"Epoch {epoch+1}/{num_epochs}"
+            f"Train Loss: {epoch_loss:.4f}"
+            f"Train Accuracy: {epoch_accuracy:.4f}"
+            f"Validation Loss: {val_epoch_loss:.4f}"
             f"Validation Accuracy: {val_epoch_accuracy:.4f}")
 
     print("Training complete")
