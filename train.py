@@ -84,17 +84,18 @@ def main():
         random_state=42,
     )
 
-    transform = transforms.Compose(
-        [
-            transforms.ToPILImage(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    )
+    transform = transforms.Compose([transforms.ToPILImage(), transforms.ToTensor(
+    ), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), ])
 
-    train_dataset = CustomDataset(train_images, train_labels, transform=transform)
+    train_dataset = CustomDataset(
+        train_images,
+        train_labels,
+        transform=transform)
     val_dataset = CustomDataset(val_images, val_labels, transform=transform)
-    test_dataset = CustomDataset(test_images, test_labels_encoded, transform=transform)
+    test_dataset = CustomDataset(
+        test_images,
+        test_labels_encoded,
+        transform=transform)
 
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
@@ -167,8 +168,7 @@ def main():
         print(
             f"Epoch {epoch+1}/{num_epochs}, "
             f"Train Loss: {epoch_loss:.4f}, Train Accuracy: {epoch_accuracy:.4f}, "
-            f"Validation Loss: {val_epoch_loss:.4f}, Validation Accuracy: {val_epoch_accuracy:.4f}"
-        )
+            f"Validation Loss: {val_epoch_loss:.4f}, Validation Accuracy: {val_epoch_accuracy:.4f}")
 
     print("Training complete")
 
@@ -218,7 +218,12 @@ def main():
 
     fpr, tpr, _ = roc_curve(y_true, y_pred_proba[:, 1])
     plt.figure(figsize=(10, 7))
-    plt.plot(fpr, tpr, color="blue", lw=2, label=f"ROC curve (area = {roc_auc:.2f})")
+    plt.plot(
+        fpr,
+        tpr,
+        color="blue",
+        lw=2,
+        label=f"ROC curve (area = {roc_auc:.2f})")
     plt.plot([0, 1], [0, 1], color="gray", lw=2, linestyle="--")
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
