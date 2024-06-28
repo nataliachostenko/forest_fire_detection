@@ -1,0 +1,6 @@
+matplotlib
+seaborn
+opencv-python-headless
+numpy
+scikit-learn
+torchvision
