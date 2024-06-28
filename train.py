@@ -10,16 +10,23 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score, roc_curve, accuracy_score
+from sklearn.metrics import (
+    confusion_matrix,
+    classification_report,
+    roc_auc_score,
+    roc_curve,
+    accuracy_score,
+)
 from torchvision import models, transforms
+
 
 def load_images_with_labels(folder):
     images = []
     labels = []
-    for label in ['fire', 'nofire']:
+    for label in ["fire", "nofire"]:
         path = os.path.join(folder, label)
         print(f"Loading images from: {path}")  # Diagnostyka
-        files = glob(os.path.join(path, '*.jpg'))
+        files = glob(os.path.join(path, "*.jpg"))
         print(f"Found {len(files)} images in {path}")  # Diagnostyka
         for filename in files:
             img = cv2.imread(filename)
@@ -30,6 +37,7 @@ def load_images_with_labels(folder):
             else:
                 print(f"Failed to load image: {filename}")  # Diagnostyka
     return np.array(images), np.array(labels)
+
 
 class CustomDataset(Dataset):
     def __init__(self, images, labels, transform=None):
@@ -47,10 +55,11 @@ class CustomDataset(Dataset):
             image = self.transform(image)
         return image, label
 
+
 def main():
     data_dir = "/app/data/forest_fire"
-    train_dir = os.path.join(data_dir, 'Training and Validation')
-    test_dir = os.path.join(data_dir, 'Testing')
+    train_dir = os.path.join(data_dir, "Training and Validation")
+    test_dir = os.path.join(data_dir, "Testing")
 
     all_images, all_labels = load_images_with_labels(train_dir)
     print(f"Loaded {len(all_images)} training images")  # Diagnostyka
@@ -59,21 +68,29 @@ def main():
     print(f"Loaded {len(test_images)} testing images")  # Diagnostyka
 
     if len(all_images) == 0 or len(test_images) == 0:
-        raise ValueError("No images found in the specified directories. Please check the directory paths and contents.")
+        raise ValueError(
+            "No images found in the specified directories. Please check the directory paths and contents."
+        )
 
     label_encoder = LabelEncoder()
     all_labels_encoded = label_encoder.fit_transform(all_labels)
     test_labels_encoded = label_encoder.transform(test_labels)
 
     train_images, val_images, train_labels, val_labels = train_test_split(
-        all_images, all_labels_encoded, test_size=0.2, stratify=all_labels_encoded, random_state=42
+        all_images,
+        all_labels_encoded,
+        test_size=0.2,
+        stratify=all_labels_encoded,
+        random_state=42,
     )
 
-    transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
 
     train_dataset = CustomDataset(train_images, train_labels, transform=transform)
     val_dataset = CustomDataset(val_images, val_labels, transform=transform)
@@ -147,9 +164,11 @@ def main():
         val_losses.append(val_epoch_loss)
         val_accuracies.append(val_epoch_accuracy)
 
-        print(f"Epoch {epoch+1}/{num_epochs}, "
-              f"Train Loss: {epoch_loss:.4f}, Train Accuracy: {epoch_accuracy:.4f}, "
-              f"Validation Loss: {val_epoch_loss:.4f}, Validation Accuracy: {val_epoch_accuracy:.4f}")
+        print(
+            f"Epoch {epoch+1}/{num_epochs}, "
+            f"Train Loss: {epoch_loss:.4f}, Train Accuracy: {epoch_accuracy:.4f}, "
+            f"Validation Loss: {val_epoch_loss:.4f}, Validation Accuracy: {val_epoch_accuracy:.4f}"
+        )
 
     print("Training complete")
 
@@ -172,31 +191,43 @@ def main():
 
     cm = confusion_matrix(all_labels, all_predictions)
     plt.figure(figsize=(10, 7))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
-    plt.title('Confusion Matrix')
-    plt.savefig('confusion_matrix.png')
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=label_encoder.classes_,
+        yticklabels=label_encoder.classes_,
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title("Confusion Matrix")
+    plt.savefig("confusion_matrix.png")
 
-    print(classification_report(all_labels, all_predictions, target_names=label_encoder.classes_))
+    print(
+        classification_report(
+            all_labels, all_predictions, target_names=label_encoder.classes_
+        )
+    )
 
     y_true = np.array(all_labels)
     y_pred_proba = np.array(all_probs)
 
     roc_auc = roc_auc_score(y_true, y_pred_proba[:, 1])
-    print(f'ROC-AUC: {roc_auc}')
+    print(f"ROC-AUC: {roc_auc}")
 
     fpr, tpr, _ = roc_curve(y_true, y_pred_proba[:, 1])
     plt.figure(figsize=(10, 7))
-    plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], color='gray', lw=2, linestyle='--')
+    plt.plot(fpr, tpr, color="blue", lw=2, label=f"ROC curve (area = {roc_auc:.2f})")
+    plt.plot([0, 1], [0, 1], color="gray", lw=2, linestyle="--")
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) Curve')
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("Receiver Operating Characteristic (ROC) Curve")
     plt.legend(loc="lower right")
-    plt.savefig('roc_curve.png')
+    plt.savefig("roc_curve.png")
+
 
 if __name__ == "__main__":
     main()
